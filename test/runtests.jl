@@ -1,3 +1,4 @@
+using DifferentialRotations
 using Test
 using StaticArrays
 using ForwardDiff
