@@ -1,0 +1,4 @@
+name = "DifferentialRotations"
+uuid = "67b05b69-bfda-4565-9187-7150922e6889"
+authors = ["Brian Jackson <bjack205@gmail.com>"]
+version = "0.1.0"
