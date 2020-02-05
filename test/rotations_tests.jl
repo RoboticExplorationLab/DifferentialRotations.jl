@@ -128,7 +128,7 @@ p0 = MRP(0,0,0)
 g1 = RodriguesParam(q1)
 g2 = RodriguesParam(q2)
 @test g2 ≈ RodriguesParam(-q2)  # test double-cover
-@test q2 ≈ UnitQuaternion(g2)
+@test (q2 ≈ UnitQuaternion(g2)) || (q2 ≈ -UnitQuaternion(g2))
 @test g2 ≈ RodriguesParam(UnitQuaternion(g2))
 
 # Test compostion and rotation
