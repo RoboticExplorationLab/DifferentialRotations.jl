@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/RoboticExplorationLab/DifferentialRotations.jl.svg?branch=master)](https://travis-ci.com/RoboticExplorationLab/DifferentialRotations.jl)
+
 # DifferentialRotations.jl
 This package provides several useful types for representing 3D rotations,
 as well as many derivatives with respect to those rotations.
