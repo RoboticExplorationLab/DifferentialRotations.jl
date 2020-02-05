@@ -16,7 +16,6 @@ end
 RodriguesParam(g::SVector{3,T}) where T = RodriguesParam{T}(g[1], g[2], g[3])
 (::Type{<:RodriguesParam})(::Type{T},x,y,z) where T = RodriguesParam{T}(T(x),T(y),T(z))
 (::Type{<:RodriguesParam})(p::RodriguesParam) = p
-(::Type{<:RodriguesParam})(q::UnitQuaternion{T}) where T = RodriguesParam(q.x/q.s, q.y/q.s, q.z/q.s)
 
 
 # ~~~~~~~~~~~~~~~ Conversions ~~~~~~~~~~~~~~~ #
@@ -74,10 +73,6 @@ end
 
 
 
-function rotmat(g::RodriguesParam)
-    ghat = skew(SVector(g))
-    I + 2*ghat*(ghat + I)/(1+norm2(g))
-end
 
 function ∇rotate(g0::RodriguesParam, r)
     g = SVector(g0)

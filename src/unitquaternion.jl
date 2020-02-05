@@ -2,7 +2,9 @@
 
 abstract type QuatMap end
 
-""" $(TYPEDEF)
+""" ```
+UnitQuaternion{T,D} <: Rotation
+```
 4-parameter attitute representation that is singularity-free. Quaternions with unit norm
 represent a double-cover of SO(3). The `UnitQuaternion` does NOT strictly enforce the unit
 norm constraint, but certain methods will assume you have a unit quaternion. The
@@ -31,11 +33,13 @@ struct UnitQuaternion{T,D<:QuatMap} <: Rotation
     z::T
 end
 
+include("quaternion_maps.jl")
+
 # ~~~~~~~~~~~~~~~ Constructors ~~~~~~~~~~~~~~~ #
 # Use default map
-UnitQuaternion(s::T,x::T,y::T,z::T) where T = UnitQuaternion{T,DEFAULT_QUATDIFF}(s,x,y,z)
-UnitQuaternion(q::SVector{4}) = UnitQuaternion{DEFAULT_QUATDIFF}(q[1],q[2],q[3],q[4])
-UnitQuaternion(r::SVector{3}) = UnitQuaternion{DEFAULT_QUATDIFF}(0.0, r[1],r[2],r[3])
+UnitQuaternion(s::T,x::T,y::T,z::T) where T = UnitQuaternion{T,DEFAULT_QMAP}(s,x,y,z)
+UnitQuaternion(q::SVector{4}) = UnitQuaternion{DEFAULT_QMAP}(q[1],q[2],q[3],q[4])
+UnitQuaternion(r::SVector{3}) = UnitQuaternion{DEFAULT_QMAP}(0.0, r[1],r[2],r[3])
 
 # Provide a map
 UnitQuaternion{D}(s::T,x::T,y::T,z::T) where {T,D} = UnitQuaternion{T,D}(s,x,y,z)
@@ -86,7 +90,7 @@ function LinearAlgebra.normalize(q::UnitQuaternion{T,D}) where {T,D}
 end
 
 # Identity
-(::Type{Q}) where Q<:UnitQuaternion = Q(1.0, 0.0, 0.0, 0.0)
+(::Type{Q})(I::UniformScaling) where Q<:UnitQuaternion = Q(1.0, 0.0, 0.0, 0.0)
 
 # Equality
 (≈)(q::UnitQuaternion, u::UnitQuaternion) = q.s ≈ u.s && q.x ≈ u.x && q.y ≈ u.y && q.z ≈ u.z
@@ -132,7 +136,12 @@ end
 
 # Composition
 """ Quternion Composition
-Equivalent to `Lmult(q) * SVector(w)` or `Rmult(w) * SVector(q)`
+Equivalent to
+```julia
+Lmult(q) * SVector(w)
+```julia
+Rmult(w) * SVector(q)
+```
 """
 function (*)(q::UnitQuaternion{T1,D1}, w::UnitQuaternion{T2,D2}) where {T1,T2,D1,D2}
     T = promote_type(T1, T2)
@@ -143,9 +152,9 @@ function (*)(q::UnitQuaternion{T1,D1}, w::UnitQuaternion{T2,D2}) where {T1,T2,D1
                         q.s * w.z + q.x * w.y - q.y * w.x + q.z * w.s)
 end
 
-``` Rotate a vector
+""" Rotate a vector
 Equivalent to `Hmat()' Lmult(q) * Rmult(q)' Hmat() * r`
-```
+"""
 function Base.:*(q::UnitQuaternion{Tq}, r::SVector{3}) where Tq
     qo = (-q.x  * r[1] - q.y * r[2] - q.z * r[3],
            q.s  * r[1] + q.y * r[3] - q.z * r[2],
@@ -163,7 +172,7 @@ end
 function (*)(q::Q, s::Real) where Q<:UnitQuaternion
     return Q(q.s*s, q.x*s, q.y*s, q.z*s)
 end
-(*)(s::Real, q::Q) = q*s
+(*)(s::Real, q::Q) where Q<:UnitQuaternion = q*s
 
 
 

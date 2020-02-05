@@ -15,7 +15,6 @@ yaw(e::RPY) = e.ψ
 
 # ~~~~~~~~~~~~~~~ Constructors ~~~~~~~~~~~~~~~ #
 RPY(e::SVector{3,T}) where T = RPY{T}(e[1], e[2], e[3])
-RPY(R::SMatrix{3,3,T}) where T =  RPY(rotmat_to_rpy(R))
 RPY(q::UnitQuaternion) = RPY(rotmat(q))
 RPY(p::MRP) = RPY(rotmat(p))
 (::Type{<:RPY})(e::RPY) = e

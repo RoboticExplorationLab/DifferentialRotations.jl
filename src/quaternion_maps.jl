@@ -46,7 +46,7 @@ end
 """```julia
 jacobian(::Type{<:QuatMap}, ϕ)
 ```
-Jacobian of the quaternion map that takes a three-dimensional vector `\phi` and returns a
+Jacobian of the quaternion map that takes a three-dimensional vector `ϕ` and returns a
     unit quaternion.
 Returns a 4x3 Static Matrix
 

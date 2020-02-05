@@ -9,8 +9,8 @@ function rotmat(q::UnitQuaternion)
 end
 
 function rotmat(g::RodriguesParam)
-    S = skew(g)
-    I + 2*(g^2 - g)/(1+norm2(g))
+    ghat = skew(SVector(g))
+    I + 2*ghat*(ghat + I)/(1+norm2(g))
 end
 
 function rotmat(p::MRP)
