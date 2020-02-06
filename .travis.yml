@@ -10,7 +10,7 @@ julia:
 notifications:
   email: false
 
-# codecov: true
+codecov: true
 # coveralls: true
 #
 # after_success:
