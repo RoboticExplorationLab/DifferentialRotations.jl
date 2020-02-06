@@ -10,6 +10,31 @@ r = @SVector rand(3)
 #                                 QUATERNIONS
 ############################################################################################
 
+# Test constructors
+@test UnitQuaternion(@SVector [1,3,4,5.]) == UnitQuaternion(1.,3.,4.,5.)
+@test UnitQuaternion(rand(UnitQuaternion)) isa
+    UnitQuaternion{Float64,DifferentialRotations.DEFAULT_QMAP}
+
+# Initializers
+@test zero(UnitQuaternion) == UnitQuaternion(1.0, 0.0, 0.0, 0.0)
+@test zero(UnitQuaternion{Float64,MRPMap}) isa UnitQuaternion{Float64,MRPMap}
+@test zero(UnitQuaternion) == UnitQuaternion(I)
+@test zero(rand(UnitQuaternion)) == UnitQuaternion(I)
+
+# Test math
+@test UnitQuaternion(I) isa UnitQuaternion{Float64,DifferentialRotations.DEFAULT_QMAP}
+@test UnitQuaternion{Float64,MRPMap}(I) isa UnitQuaternion{Float64,MRPMap}
+@test LinearAlgebra.norm2(q1) ≈ norm(q1)^2
+
+ϕ = ExponentialMap(q1)
+@test expm(ϕ*2) ≈ q1
+q = UnitQuaternion(ϕ)
+@test exp(q) ≈ q1
+
+q = UnitQuaternion(@SVector [1,2,3,4.])
+@test 2*q == UnitQuaternion(@SVector [2,4,6,8.])
+@test q*2 == UnitQuaternion(@SVector [2,4,6,8.])
+
 ϕ = 0.1*@SVector [1,0,0]
 @test logm(expm(ϕ)) ≈ ϕ
 @test expm(logm(q1)) ≈ q1
@@ -25,12 +50,20 @@ q3 = q2*q1
 @test q3/q1 ≈ q2
 @test inv(q1)*r ≈ q1\r
 @test r ≈ q3\(q2*q1*r)
+@test q3 ⊖ q2 ≈ CayleyMap(q1)
+q3 = UnitQuaternion{IdentityMap}(q3)
+@test q3 ⊖ q2 ≈ SVector(q3) - SVector(q2)
 
 q = q1
 rhat = UnitQuaternion(r)
 @test q*r ≈ Vmat()*Lmult(q)*Rmult(q)'*Vmat()'r
+@test q*r ≈ Vmat()*Lmult(q)*Rmult(q)'*Hmat(r)
 @test q*r ≈ Vmat()*Lmult(q)*Lmult(rhat)*Tmat()*SVector(q)
 @test q*r ≈ Vmat()*Rmult(q)'*Rmult(rhat)*SVector(q)
+@test q*r ≈ Hmat()'Rmult(q)'*Rmult(rhat)*SVector(q)
+@test Rmult(SVector(q)) == Rmult(q)
+@test Lmult(SVector(q)) == Lmult(q)
+@test Hmat(r) == SVector(UnitQuaternion(r))
 
 @test ForwardDiff.jacobian(q->UnitQuaternion{VectorPart}(q)*r,SVector(q)) ≈ ∇rotate(q,r)
 # @btime ForwardDiff.jacobian(q->UnitQuaternion(q)*$r,SVector($q))
@@ -40,6 +73,16 @@ rhat = UnitQuaternion(r)
     ∇composition1(q2,q1)
 @test ForwardDiff.jacobian(q->SVector(UnitQuaternion{VectorPart}(q)*q1),SVector(q2)) ≈
     ∇composition2(q2,q1)
+
+b = @SVector rand(4)
+qval = SVector(q1)
+ForwardDiff.jacobian(q->∇composition1(q2,UnitQuaternion(q))'b, @SVector [1,0,0,0.])
+diffcomp =  ϕ->SVector(q2*CayleyMap(ϕ))
+∇diffcomp(ϕ) = ForwardDiff.jacobian(diffcomp, ϕ)
+@test ∇diffcomp(@SVector zeros(3)) ≈ DifferentialRotations.∇differential(q2)
+@test ForwardDiff.jacobian(ϕ->∇diffcomp(ϕ)'b, @SVector zeros(3)) ≈
+    DifferentialRotations.∇²differential(q2, b)
+
 # @btime ForwardDiff.jacobian(q->SVector($u2*UnitQuaternion(q)),SVector($u1))
 # @btime ∇composition1($u2,$u1)
 # @btime ForwardDiff.jacobian(q->SVector(UnitQuaternion(q)*$u1),SVector($u2))
@@ -63,6 +106,14 @@ e = RPY(0,0,pi/2)
 @test e isa RPY{Float64}
 @test RPY(0,0,0) isa RPY{Int}
 @test RPY(e) isa RPY{Float64}
+@test RPY(Float32, 0,0,0) isa RPY{Float32}
+
+# Test initializers
+@test rand(RPY) isa RPY{Float64}
+@test rand(RPY{Float32}) isa RPY{Float32}
+@test zero(RPY{Float32}) == RPY(0,0,0)
+@test zero(RPY{Float32}) isa RPY{Float32}
+@test zero(RPY) isa RPY{Float64}
 
 e0 = @SVector [deg2rad(45), deg2rad(60), deg2rad(20)]
 e1 = RPY(e0...)
@@ -92,6 +143,9 @@ e3 = e2*e1
 @test ∇rotate(e1,r) isa SMatrix{3,3}
 @test ∇composition1(e2,e1) isa SMatrix{3,3}
 @test ∇composition2(e2,e1) isa SMatrix{3,3}
+
+# Test kinematics
+@test kinematics(e1, ω) isa SVector{3}
 
 
 ############################################################################################

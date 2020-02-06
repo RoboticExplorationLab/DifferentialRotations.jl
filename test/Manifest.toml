@@ -3,6 +3,12 @@
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[Combinatorics]]
+deps = ["Polynomials"]
+git-tree-sha1 = "140cc833258df8e5aafabdb068875ac0c256be23"
+uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+version = "1.0.0"
+
 [[CommonSubexpressions]]
 deps = ["Test"]
 git-tree-sha1 = "efdaf19ab11c7889334ca247ff4c9f7c322817b0"
@@ -71,6 +77,12 @@ version = "0.5.3+1"
 deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Test", "UUIDs"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
+[[Polynomials]]
+deps = ["LinearAlgebra", "RecipesBase"]
+git-tree-sha1 = "f7c0c07e82798aef542d60a6e6e85e39f4590750"
+uuid = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
+version = "0.5.3"
+
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -82,6 +94,11 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[Random]]
 deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[[RecipesBase]]
+git-tree-sha1 = "b4ed4a7f988ea2340017916f7c9e5d7560b52cae"
+uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+version = "0.8.0"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"

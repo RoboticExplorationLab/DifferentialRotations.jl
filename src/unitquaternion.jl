@@ -54,6 +54,7 @@ UnitQuaternion{T,D}(q::R) where {T,D,R <: UnitQuaternion} =
 
 (::Type{UnitQuaternion{T,D}})(x::SVector{4,T2}) where {T,T2,D} =
     UnitQuaternion{promote_type(T,T2),D}(x[1], x[2], x[3], x[4])
+(::Type{UnitQuaternion{T,D}})(r::Rotation) where {T,D} = UnitQuaternion{D}(UnitQuaternion(r))
 
 # ~~~~~~~~~~~~~~~ Getters ~~~~~~~~~~~~~~~ #
 map_type(::UnitQuaternion{T,D}) where {T,D} = D

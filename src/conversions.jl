@@ -70,11 +70,12 @@ end
 
 
 # ~~~~~~~~~~~~~~~~ Quaternion <=> MRP ~~~~~~~~~~~~~~~~~~ #
-function (::Type{<:UnitQuaternion})(p::MRP)
+function (::Type{Q})(p::MRP) where Q <: UnitQuaternion
     p = SVector(p)
     n2 = p'p
     M = 2/(1+n2)
-    UnitQuaternion{MRPMap}((1-n2)/(1+n2), M*p[1], M*p[2], M*p[3])
+    q = UnitQuaternion{MRPMap}((1-n2)/(1+n2), M*p[1], M*p[2], M*p[3])
+    Q(q)
 end
 
 function (::Type{<:MRP})(q::UnitQuaternion)
@@ -83,9 +84,10 @@ function (::Type{<:MRP})(q::UnitQuaternion)
 end
 
 # ~~~~~~~~~~~~~~~ Quaternion <=> RP ~~~~~~~~~~~~~~~~~~ #
-function (::Type{<:UnitQuaternion})(g::RodriguesParam{T}) where T
+function (::Type{Q})(g::RodriguesParam{T}) where {T,Q<:UnitQuaternion}
     M = 1/sqrt(1+norm2(g))
-    UnitQuaternion{T,CayleyMap}(M, M*g.x, M*g.y, M*g.z)
+    q = UnitQuaternion{T,CayleyMap}(M, M*g.x, M*g.y, M*g.z)
+    Q(q)
 end
 
 function (::Type{<:RodriguesParam})(q::UnitQuaternion)
