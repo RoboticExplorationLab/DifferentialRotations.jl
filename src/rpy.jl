@@ -1,3 +1,5 @@
+export
+    roll, pitch, yaw
 
 """
 Roll-pitch-yaw Euler angles.

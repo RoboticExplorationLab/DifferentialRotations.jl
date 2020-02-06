@@ -58,8 +58,17 @@ rhat = UnitQuaternion(r)
 #                          ROLL, PITCH, YAW EULER ANGLES
 ############################################################################################
 
+# Test constructors
+e = RPY(0,0,pi/2)
+@test e isa RPY{Float64}
+@test RPY(0,0,0) isa RPY{Int}
+@test RPY(e) isa RPY{Float64}
+
 e0 = @SVector [deg2rad(45), deg2rad(60), deg2rad(20)]
 e1 = RPY(e0...)
+@test roll(e1) == deg2rad(45)
+@test pitch(e1) == deg2rad(60)
+@test yaw(e1) == deg2rad(20)
 
 R = rotmat(e1)
 e1_ = DifferentialRotations.from_rotmat(rotmat(e1))
@@ -88,6 +97,21 @@ e3 = e2*e1
 ############################################################################################
 #                              MODIFIED RODRIGUES PARAMETERS
 ############################################################################################
+
+# Test constructors
+@test MRP(Float32,1,1,1) isa MRP{Float32}
+@test MRP{Float32}(@SVector rand(3)) isa MRP{Float32}
+p = rand(MRP{Float64})
+@test p isa MRP{Float64}
+@test MRP{Float32}(p) isa MRP{Float32}
+
+# Test initializers
+@test zero(MRP) == MRP(0.0, 0.0, 0.0)
+@test zero(MRP{Float32}) == MRP(0f0, 0f0, 0f0)
+
+# Test math
+@test norm(p) == norm(SVector(p))
+
 p1 = MRP(q1)
 p2 = MRP(q2)
 # @btime $p2*$p1
@@ -121,9 +145,35 @@ R1 = rotmat(p)
 p0 = MRP(0,0,0)
 @test DifferentialRotations.∇differential(p2) ≈ ∇composition1(p2,p0)
 
+b = @SVector rand(3)
+pval = SVector(p1)
+@test ForwardDiff.jacobian(p->∇composition1(p2,MRP(p))'b, pval) ≈
+    DifferentialRotations.∇²composition1(p2,p1,b)
+@test DifferentialRotations.∇²differential(p2, b) ≈
+    DifferentialRotations.∇²composition1(p2, p0, b)
+
+@test ForwardDiff.jacobian(p->SVector(p2\MRP(p)), pval) ≈ DifferentialRotations.∇err(p2, p1)
+@test ForwardDiff.jacobian(p->DifferentialRotations.∇err(p2, MRP(p))'b, pval) ≈
+    DifferentialRotations.∇²err(p2, p1, b)
+
+# Test rotation jacobian
+pval = SVector(p1)
+@test ForwardDiff.jacobian(x->SVector(MRP(x)*r), pval) ≈ ∇rotate(p1,r)
+
+# Test kinematics
+@test kinematics(p1, ω) isa SVector{3}
+
 ############################################################################################
 #                              RODRIGUES PARAMETERS
 ############################################################################################
+
+# Test constructors
+g = rand(RodriguesParam)
+@test RodriguesParam(Float32,1,1,1) isa RodriguesParam{Float32}
+@test RodriguesParam{Float32}(g) isa RodriguesParam{Float64}  # QUESTION: is this desired?
+
+# Test initializers
+@test zero(RodriguesParam) == RodriguesParam(0.,0.,0.)
 
 g1 = RodriguesParam(q1)
 g2 = RodriguesParam(q2)
@@ -157,6 +207,14 @@ end
 g0 = RodriguesParam{Float64}(0,0,0)
 @test ∇composition1(g2, g0) ≈ DifferentialRotations.∇differential(g2)
 
+gval = SVector(g1)
+@test ForwardDiff.jacobian(g->∇composition1(g2,RodriguesParam(g))'b, gval) ≈
+    DifferentialRotations.∇²composition1(g2,g1,b)
+@test DifferentialRotations.∇²differential(g2, b) ≈
+    DifferentialRotations.∇²composition1(g2, g0, b)
+
+# Test kinematics
+@test kinematics(g1, ω) isa SVector{3}
 
 # Conversions
 import DifferentialRotations: rotmat_to_quat

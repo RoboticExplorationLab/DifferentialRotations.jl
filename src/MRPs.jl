@@ -100,7 +100,7 @@ end
 
 
 
-# ~~~~~~~~~~~~~~~ Use Jacobians ~~~~~~~~~~~~~~~ #
+# ~~~~~~~~~~~~~~~ Useful Jacobians ~~~~~~~~~~~~~~~ #
 function ∇rotate(p::MRP, r)
     p = SVector(p)
     4( (1-p'p)*skew(r)*(4p*p'/(1+p'p) - I) - (4/(1+p'p)*skew(p) + I)*2*skew(p)*r*p'
@@ -134,16 +134,19 @@ function ∇²composition1(p2::MRP, p1::MRP, b::SVector{3})
     n1 = p1'p1
     n2 = p2'p2
     D = 1 / (1+n1*n2 - 2p1'p2)  # scalar
-    dD = -D^2 * (n2*2p1 - 2p2)  # 3x1
+    dD = -D^2 * (n2*2p1 - 2p2)  # 3x1 (correct)
     A = -((1-n2)*p1 + (1-n1)*p2 - cross(2p1, p2) )  # 3x1
-    dA = -I*(1-n2) + 2p2*p1' - 2skew(p2)  # 3x3
-    B = 2(p1*n2 -  p2)'b  # scalar
+    dA = -I*(1-n2) + 2p2*p1' - 2skew(p2)  # 3x3 (correct)
+    B = 2(p1*n2 -  p2)  # 3x1
     dB = 2n2*b  # 3x1
-    d1 = -2p2*b' * D + ((1-n2)*b + -2p2*p1'b + 2skew(p2)*b )*dD'
-    d2 = dA * D^2 * B +
-         A * 2D * dD' * B +
-         A * D^2 * dB'
-    return d1 + d2
+
+    # d1b = ((1-n2)*I + -2p1*p2' - 2skew(p2) ) * D * b
+    dd1b = -2I*(p2'b)*D + ((1-n2)*I + -2p1*p2' - 2skew(p2) )*b*dD' # 3x3 (correct)
+
+    dd2 = D^2 * B * b' * dA +
+         D^2 * A'b*2*(n2*I) +
+         B*A'b* 2D * dD' # 3x3 (correct)
+    dd1b + dd2
 end
 
 function ∇differential(p::MRP)
