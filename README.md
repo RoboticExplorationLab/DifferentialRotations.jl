@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.com/RoboticExplorationLab/DifferentialRotations.jl.svg?branch=master)](https://travis-ci.com/RoboticExplorationLab/DifferentialRotations.jl)
-
 [![codecov](https://codecov.io/gh/RoboticExplorationLab/DifferentialRotations.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/RoboticExplorationLab/DifferentialRotations.jl)
 
 # DifferentialRotations.jl
@@ -132,3 +131,10 @@ This package is similar to `Rotations.jl` but more focused on implementing the m
 needed to take derivatives with respect to rotations, and provides functionality to the
 quaternion type that `Rotations.jl` and `Quaternions.jl` do not, namely the parameterization
 on the quaternion mapping to differential quaternions.
+
+### Benchmark Comparisons
+Some current benchmark comparisons for quaternions
+* Quaternion composition: Same as `Quaternions.jl`. 100% faster than `Rotations.jl`
+* Quaternion rotation: 20% faster than `Quaternions.jl`, 17% faster than `Rotations.jl`
+* Quaternion exponential: Same as `Quaternions.jl`
+* Quaternion logarithm: 50% faster than `Quaternions.jl`
