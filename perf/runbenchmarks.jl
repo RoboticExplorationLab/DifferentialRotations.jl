@@ -4,6 +4,8 @@ using Rotations
 using Quaternions
 using StaticArrays
 using Statistics
+using Random
+using Test
 
 # ~~~~~~~~~~~~~~~~~ Set up Comparators ~~~~~~~~~~~~~~~~~~~ #
 import Base: ==, ≈
@@ -13,7 +15,7 @@ import DifferentialRotations.vector
 @inline StaticArrays.SVector(q::Quaternion) = SVector{4}(q.s, q.v1, q.v2, q.v3)
 @inline vector(q::Quaternion) = SVector{3}(q.v1, q.v2, q.v3)
 Rotations.Quat(q::Quaternion) = Rotations.Quat(q.s, q.v1, q.v2, q.v3)
-UnitQuaternion(q::Quaternion) = UnitQuaternion(q.s, q.v1, q.v2, q.v3)
+DifferentialRotations.UnitQuaternion(q::Quaternion) = UnitQuaternion(q.s, q.v1, q.v2, q.v3)
 StaticArrays.SVector(q::Quaternion) = SVector{4}(q.s, q.v1, q.v2, q.v3)
 
 # Create multiply method for Quaternions.jl type

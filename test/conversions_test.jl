@@ -18,6 +18,11 @@ for i = 2:4
 end
 
 q2 = DifferentialRotations.rotmat_to_quat(R)
+q
+q2
 @test angle(q2\q) < 1e-12
 @test RodriguesParam(q) ≈ DifferentialRotations.rotmat_to_rp(R)
-@test MRP(q) ≈ DifferentialRotations.rotmat_to_mrp(R)
+p1 = MRP(q)
+p2 = DifferentialRotations.rotmat_to_mrp(R)
+angle(p1) - angle(p2)
+@test abs(angle(p1) - angle(p2))  < 1e-14
