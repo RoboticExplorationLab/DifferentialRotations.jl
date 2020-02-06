@@ -157,16 +157,19 @@ end
 Equivalent to `Hmat()' Lmult(q) * Rmult(q)' Hmat() * r`
 """
 function Base.:*(q::UnitQuaternion{Tq}, r::SVector{3}) where Tq
-    qo = (-q.x  * r[1] - q.y * r[2] - q.z * r[3],
-           q.s  * r[1] + q.y * r[3] - q.z * r[2],
-           q.s  * r[2] - q.x * r[3] + q.z * r[1],
-           q.s  * r[3] + q.x * r[2] - q.y * r[1])
-
-   T = promote_type(Tq, eltype(r))
-
-   return similar_type(r, T)(-qo[1] * q.x + qo[2] * q.s - qo[3] * q.z + qo[4] * q.y,
-                             -qo[1] * q.y + qo[2] * q.z + qo[3] * q.s - qo[4] * q.x,
-                             -qo[1] * q.z - qo[2] * q.y + qo[3] * q.x + qo[4] * q.s)
+   #  qo = (-q.x  * r[1] - q.y * r[2] - q.z * r[3],
+   #         q.s  * r[1] + q.y * r[3] - q.z * r[2],
+   #         q.s  * r[2] - q.x * r[3] + q.z * r[1],
+   #         q.s  * r[3] + q.x * r[2] - q.y * r[1])
+   #
+   # T = promote_type(Tq, eltype(r))
+   #
+   # return similar_type(r, T)(-qo[1] * q.x + qo[2] * q.s - qo[3] * q.z + qo[4] * q.y,
+   #                           -qo[1] * q.y + qo[2] * q.z + qo[3] * q.s - qo[4] * q.x,
+   #                           -qo[1] * q.z - qo[2] * q.y + qo[3] * q.x + qo[4] * q.s)
+    s = q.s
+    v = vector(q)
+    (s^2 - v'v)*r + 2*v*(v'r) + 2*s*cross(v,r)
 end
 
 "Scalar multiplication"
@@ -197,6 +200,10 @@ function (⊖)(q::UnitQuaternion{T,IdentityMap}, q0::UnitQuaternion) where {T}
     # return SVector(q0\q)
 end
 
+# ~~~~~~~~~~~~~~~ Kinematics ~~~~~~~~~~~~~~~ $
+function kinematics(q::UnitQuaternion{T,D}, ω::SVector{3}) where {T,D}
+    SVector(q*UnitQuaternion{T,D}(0.0, 0.5*ω[1], 0.5*ω[2], 0.5*ω[3]))
+end
 
 # ~~~~~~~~~~~~~~~ Linear Algebraic Conversions ~~~~~~~~~~~~~~~ #
 "Lmult(q2)q1 returns a vector equivalent to q2*q1 (quaternion multiplication)"

@@ -65,6 +65,8 @@ rhat = UnitQuaternion(r)
 @test Lmult(SVector(q)) == Lmult(q)
 @test Hmat(r) == SVector(UnitQuaternion(r))
 
+@test kinematics(q1,ω) isa SVector{3}
+
 @test ForwardDiff.jacobian(q->UnitQuaternion{VectorPart}(q)*r,SVector(q)) ≈ ∇rotate(q,r)
 # @btime ForwardDiff.jacobian(q->UnitQuaternion(q)*$r,SVector($q))
 # @btime ∇rotate($q,$r)

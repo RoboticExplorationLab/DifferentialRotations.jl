@@ -9,3 +9,14 @@ end
 @test UnitQuaternion{Float64,CayleyMap}(rand(UnitQuaternion)) isa rots[1]
 @test map_type(rots[1]) == CayleyMap
 @test map_type(typeof(rand(UnitQuaternion))) == DifferentialRotations.DEFAULT_QMAP
+
+# Rotation matrics
+q = rand(rots[1])
+R = rotmat(q)
+for i = 2:4
+    @test R ≈ rotmat(rots[i](q))
+end
+
+@test q ≈ DifferentialRotations.rotmat_to_quat(R)
+@test RodriguesParam(q) ≈ DifferentialRotations.rotmat_to_rp(R)
+@test MRP(q) ≈ DifferentialRotations.rotmat_to_mrp(R)

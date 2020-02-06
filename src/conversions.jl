@@ -50,11 +50,11 @@ function rotmat_to_quat(A::SMatrix{3,3,T}) where T
 end
 
 function rotmat_to_rp(A::SMatrix{3,3,T}) where T
-    RodriguesParam(rotmat_to_quat)
+    RodriguesParam(rotmat_to_quat(A))
 end
 
 function rotmat_to_mrp(A::SMatrix{3,3,T}) where T
-    MRP(rotmat_to_quat)
+    MRP(rotmat_to_quat(A))
 end
 
 # from RPY in rpy.jl
