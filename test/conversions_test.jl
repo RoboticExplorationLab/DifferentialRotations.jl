@@ -17,6 +17,7 @@ for i = 2:4
     @test R ≈ rotmat(rots[i](q))
 end
 
-@test q ≈ DifferentialRotations.rotmat_to_quat(R)
+q2 = DifferentialRotations.rotmat_to_quat(R)
+@test angle(q2\q) < 1e-12
 @test RodriguesParam(q) ≈ DifferentialRotations.rotmat_to_rp(R)
 @test MRP(q) ≈ DifferentialRotations.rotmat_to_mrp(R)
