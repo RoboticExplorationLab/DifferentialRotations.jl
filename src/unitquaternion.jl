@@ -26,7 +26,7 @@ UnitQuaternion{D}(q::SVector{4})
 UnitQuaternion{D}(r::SVector{3})  # quaternion with 0 real part
 ```
 """
-struct UnitQuaternion{T,D<:QuatMap} <: Rotation
+struct UnitQuaternion{T,D<:QuatMap} <: Rotation{T}
     s::T
     x::T
     y::T

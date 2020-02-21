@@ -38,7 +38,7 @@ export
     ⊕,
     ⊖
 
-abstract type Rotation end
+abstract type Rotation{T} <: StaticMatrix{3,3,T} end
 
 function skew(v::AbstractVector)
     @assert length(v) == 3

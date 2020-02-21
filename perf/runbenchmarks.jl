@@ -56,8 +56,8 @@ q2 = nquatrand()
 r1 = Rotations.Quat(q1)
 r2 = Rotations.Quat(q2)
 
-u1 = UnitQuaternion(q1)
-u2 = UnitQuaternion(q2)
+u1 = UnitQuaternion(q1);
+u2 = UnitQuaternion(q2);
 
 # Test Equality
 @test q1 == u1

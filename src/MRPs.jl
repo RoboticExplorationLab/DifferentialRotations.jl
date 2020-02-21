@@ -10,7 +10,7 @@ have a singularity at θ = ±180°.
 MRP(x, y, z)
 MRP(r::SVector{3})
 """
-struct MRP{T} <: Rotation
+struct MRP{T} <: Rotation{T}
     x::T
     y::T
     z::T

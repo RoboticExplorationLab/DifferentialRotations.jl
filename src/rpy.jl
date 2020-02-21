@@ -5,7 +5,7 @@ export
 Roll-pitch-yaw Euler angles.
     Follows convetion from "The GRASP multiple micro-UAV testbed" [Michael et al, 2010]
 """
-struct RPY{T} <: Rotation
+struct RPY{T} <: Rotation{T}
     ϕ::T  # roll
     θ::T  # pitch
     ψ::T  # yaw
